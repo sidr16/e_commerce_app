@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'widgets/app_navigation_bar.dart';
 
@@ -13,11 +14,13 @@ class NavigationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      body: navigationShell,
-      bottomNavigationBar: AppNavigationBar(
-        navigationShell: navigationShell,
+    return CupertinoScaffold(
+      body: Scaffold(
+        extendBody: true,
+        body: navigationShell,
+        bottomNavigationBar: AppNavigationBar(
+          navigationShell: navigationShell,
+        ),
       ),
     );
   }
