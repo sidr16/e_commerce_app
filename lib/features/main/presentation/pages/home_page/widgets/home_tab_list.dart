@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../../core/widgets/buttons/primary_tab_button.dart';
+import '../../../../domain/entities/category_entity/category_entity.dart';
 
 class HomeTabList extends StatelessWidget {
   const HomeTabList({
     required this.pageController,
     required this.currentPage,
+    required this.categories,
     super.key,
   });
 
   final int currentPage;
   final PageController pageController;
+  final List<CategoryEntity> categories;
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +24,10 @@ class HomeTabList extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
+          final category = categories[index];
+
           return PrimaryTabButton(
-            title: 'Энергетики',
+            title: category.name,
             selected: index == currentPage,
             onTap: () {
               pageController.animateToPage(
@@ -33,7 +38,7 @@ class HomeTabList extends StatelessWidget {
             },
           );
         },
-        itemCount: 10,
+        itemCount: categories.length,
       ),
     );
   }

@@ -1,30 +1,62 @@
 import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../domain/entities/category_entity/category_entity.dart';
+import '../../bloc/product_category_list_bloc/product_category_list_bloc.dart';
+import '../../bloc/product_category_list_bloc/product_category_list_state.dart';
 import 'widgets/home_tab_list.dart';
 import 'widgets/home_tab_screen.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  Widget build(BuildContext context) {
+    final categories = context.watch<ProductCategoryListBloc>();
+
+    return Scaffold(
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      backgroundColor: const Color(0xfff4e8de),
+      body: switch (categories.state) {
+        final ProductCategoryListDataState data =>
+          _BuildHomePage(data.categories).animate().fade(),
+        ProductCategoryListLoadingState _ => const Center(
+            child: CircularProgressIndicator(),
+          ),
+        final ProductCategoryListErrorState data => Center(
+            child: Text(
+              data.error.toString(),
+              style: const TextStyle(color: Colors.red),
+            ),
+          )
+      },
+    );
+  }
 }
 
-class _HomePageState extends State<HomePage> {
+class _BuildHomePage extends StatefulWidget {
+  const _BuildHomePage(this.categories);
+
+  final List<CategoryEntity> categories;
+
+  @override
+  State<_BuildHomePage> createState() => _BuildHomePageState();
+}
+
+class _BuildHomePageState extends State<_BuildHomePage> {
   final _pageController = PageController();
   final _scrollController = ScrollController();
-  int _currentPage = 0;
+  final _currentPage = ValueNotifier<int>(0);
 
   void _pageEventListener() {
     final page = _pageController.page?.round();
 
-    if (page != null && page != _currentPage) {
-      _currentPage = page;
-
-      setState(() {});
+    if (page != null && page != _currentPage.value) {
+      _currentPage.value = page;
     }
   }
 
@@ -54,49 +86,45 @@ class _HomePageState extends State<HomePage> {
       extendBody: true,
       extendBodyBehindAppBar: true,
       backgroundColor: const Color(0xfff4e8de),
-      body: NestedScrollView(
-        controller: _scrollController,
-        physics: const BouncingScrollPhysics(),
-        headerSliverBuilder: (context, _) {
-          return [
-            SliverAppBar(
-              surfaceTintColor: Colors.transparent,
-              backgroundColor: const Color(0x1a000000),
-              foregroundColor: Colors.black,
-              expandedHeight: 300,
-              flexibleSpace: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(
-                    sigmaX: blurSigma,
-                    sigmaY: blurSigma,
-                  ),
-                  child: ColoredBox(
-                    color: Colors.transparent,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 120),
-                      child: CachedNetworkImage(
-                        imageUrl:
-                            'https://static.vecteezy.com/system/resources/previews/054/656/158/non_2x/glass-of-fresh-lemon-juice-free-png.png',
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              pinned: true,
-              leadingWidth: double.infinity,
-              leading: HomeTabList(
-                currentPage: _currentPage,
-                pageController: _pageController,
-              ),
+      appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: const Color(0x1a000000),
+        foregroundColor: Colors.black,
+        leadingWidth: double.infinity,
+        flexibleSpace: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: blurSigma,
+              sigmaY: blurSigma,
             ),
-          ];
-        },
-        body: PageView.builder(
-          controller: _pageController,
-          itemBuilder: (context, index) {
-            return const HomeTabScreen();
+            child: Container(
+              color: Colors.transparent,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          ),
+        ),
+        leading: ValueListenableBuilder(
+          valueListenable: _currentPage,
+          builder: (context, value, child) {
+            return HomeTabList(
+              currentPage: value,
+              pageController: _pageController,
+              categories: widget.categories,
+            );
           },
         ),
+      ),
+      body: PageView.builder(
+        controller: _pageController,
+        itemCount: widget.categories.length,
+        itemBuilder: (context, index) {
+          final category = widget.categories[index];
+
+          return HomeTabScreen(
+            category: category,
+          );
+        },
       ),
     );
   }

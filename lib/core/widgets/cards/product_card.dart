@@ -1,16 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../../features/main/domain/entities/product_entity/product_entity.dart';
 import '../../../features/main/presentation/modals/product_detail_modal/product_detail_modal.dart';
 import '../../constants/app_icons.dart';
 import '../buttons/tertiary_filled_button.dart';
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key});
+  const ProductCard({
+    required this.product,
+    super.key,
+  });
+
+  final ProductEntity product;
 
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(16);
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -31,20 +38,22 @@ class ProductCard extends StatelessWidget {
             spacing: 8,
             children: [
               Expanded(
-                child: CachedNetworkImage(
-                  imageUrl:
-                      'https://static.vecteezy.com/system/resources/previews/054/656/158/non_2x/glass-of-fresh-lemon-juice-free-png.png',
-                  fit: BoxFit.contain,
+                child: ClipRRect(
+                  borderRadius: borderRadius,
+                  child: CachedNetworkImage(
+                    imageUrl: product.thumbUrl,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
-              const SizedBox(
+              SizedBox(
                 height: 40,
                 child: Text(
-                  'Laimon Fresh 0.33л',
+                  product.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFFFFFFFF),
                   ),
                 ),

@@ -9,9 +9,25 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:dio/dio.dart' as _i361;
+import 'package:e_commerce_app/core/client/dio_client.dart' as _i578;
 import 'package:e_commerce_app/core/router/app_router.dart' as _i56;
+import 'package:e_commerce_app/features/main/data/data_sources/remote/product_data_source/product_data_source.dart'
+    as _i657;
+import 'package:e_commerce_app/features/main/data/repositories/product_repository_impl/product_repository_impl.dart'
+    as _i843;
+import 'package:e_commerce_app/features/main/domain/repositories/product_repository/product_repository.dart'
+    as _i577;
+import 'package:e_commerce_app/features/main/domain/use_cases/fetch_product_category_list_use_case.dart'
+    as _i553;
+import 'package:e_commerce_app/features/main/domain/use_cases/fetch_product_list_use_case.dart'
+    as _i193;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
+
+import '../../features/main/data/data_sources/remote/product_data_source/product_data_source_impl.dart';
+import '../../features/main/presentation/bloc/product_category_list_bloc/product_category_list_bloc.dart';
+import '../../features/main/presentation/bloc/product_list_bloc/product_list_bloc.dart';
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -24,7 +40,23 @@ extension GetItInjectableX on _i174.GetIt {
       environment,
       environmentFilter,
     );
+    final registerModule = _$RegisterModule();
+    gh.lazySingleton<_i361.Dio>(() => registerModule.dioClient());
     gh.lazySingleton<_i56.AppRouter>(() => _i56.AppRouter());
+    gh.singleton<_i657.ProductDataSource>(
+        () => ProductDataSourceImpl(gh<_i361.Dio>()));
+    gh.singleton<_i577.ProductRepository>(
+        () => _i843.ProductRepositoryImpl(gh<_i657.ProductDataSource>()));
+    gh.factory<_i553.FetchProductCategoryListUseCase>(() =>
+        _i553.FetchProductCategoryListUseCase(gh<_i577.ProductRepository>()));
+    gh.factory<_i193.FetchProductListUseCase>(
+        () => _i193.FetchProductListUseCase(gh<_i577.ProductRepository>()));
+    gh.factory<ProductCategoryListBloc>(() =>
+        ProductCategoryListBloc(gh<_i553.FetchProductCategoryListUseCase>()));
+    gh.factory<ProductListBloc>(
+        () => ProductListBloc(gh<_i193.FetchProductListUseCase>()));
     return this;
   }
 }
+
+class _$RegisterModule extends _i578.RegisterModule {}
