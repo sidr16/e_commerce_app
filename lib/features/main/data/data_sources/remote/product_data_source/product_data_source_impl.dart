@@ -42,4 +42,20 @@ class ProductDataSourceImpl implements ProductDataSource {
       rethrow;
     }
   }
+
+  @override
+  Future<ProductModel> fetchProductDetail(String id) async {
+    try {
+      final res = await _client.get<Map<String, dynamic>>(
+        Endpoints.lookup,
+        queryParameters: {'i': id},
+      );
+
+      return ProductModel.fromJson(
+        (res.data!['meals'] as List<dynamic>)[0] as Map<String, dynamic>,
+      );
+    } catch (err) {
+      rethrow;
+    }
+  }
 }

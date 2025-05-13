@@ -23,7 +23,10 @@ class ProductCard extends StatelessWidget {
       child: InkWell(
         borderRadius: borderRadius,
         onTap: () {
-          showProductModal(context);
+          showProductModal(
+            context,
+            id: product.id,
+          );
         },
         child: Ink(
           padding: const EdgeInsets.symmetric(

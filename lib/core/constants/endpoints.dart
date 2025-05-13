@@ -6,4 +6,6 @@ class Endpoints {
   static const filter = '$apiV1/filter.php';
 
   static const categories = '$apiV1/categories.php';
+
+  static const lookup = '$apiV1/lookup.php';
 }

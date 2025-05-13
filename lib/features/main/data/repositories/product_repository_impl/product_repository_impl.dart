@@ -38,4 +38,15 @@ class ProductRepositoryImpl implements ProductRepository {
       return Left(err);
     }
   }
+
+  @override
+  Future<Either<Exception, ProductEntity>> fetchProductDetail(String id) async {
+    try {
+      final res = await _dataSource.fetchProductDetail(id);
+
+      return Right(res.toEntity());
+    } on Exception catch (err) {
+      return Left(err);
+    }
+  }
 }

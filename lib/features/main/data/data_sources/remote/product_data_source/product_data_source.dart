@@ -7,4 +7,6 @@ abstract class ProductDataSource {
   });
 
   Future<List<CategoryModel>> fetchProductCategoryList();
+
+  Future<ProductModel> fetchProductDetail(String id);
 }

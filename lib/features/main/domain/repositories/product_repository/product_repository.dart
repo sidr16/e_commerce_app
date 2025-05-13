@@ -9,4 +9,6 @@ abstract class ProductRepository {
   });
 
   Future<Either<Exception, List<CategoryEntity>>> fetchProductCategoryList();
+
+  Future<Either<Exception, ProductEntity>> fetchProductDetail(String id);
 }
