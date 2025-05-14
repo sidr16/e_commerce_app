@@ -92,6 +92,8 @@ class _BuildDetail extends StatelessWidget {
                   ),
                 ),
               );
+
+              context.snackBar.showSnackBar('Successfully added to cart');
             },
           ),
         ),

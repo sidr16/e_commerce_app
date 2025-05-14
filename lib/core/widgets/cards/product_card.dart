@@ -8,6 +8,7 @@ import '../../../features/cart/presentation/bloc/cart_bloc/cart_event.dart';
 import '../../../features/main/domain/entities/product_entity/product_entity.dart';
 import '../../../features/main/presentation/modals/product_detail_modal/product_detail_modal.dart';
 import '../../constants/app_icons.dart';
+import '../../utils/extensions/context_extensions.dart';
 import '../buttons/tertiary_filled_button.dart';
 
 class ProductCard extends StatelessWidget {
@@ -81,6 +82,8 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                   );
+
+                  context.snackBar.showSnackBar('Successfully added to cart');
                 },
               ),
             ],
