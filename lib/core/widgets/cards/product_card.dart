@@ -1,6 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../features/cart/domain/entities/cart_product_entity.dart';
+import '../../../features/cart/presentation/bloc/cart_bloc/cart_bloc.dart';
+import '../../../features/cart/presentation/bloc/cart_bloc/cart_event.dart';
 import '../../../features/main/domain/entities/product_entity/product_entity.dart';
 import '../../../features/main/presentation/modals/product_detail_modal/product_detail_modal.dart';
 import '../../constants/app_icons.dart';
@@ -17,6 +21,7 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(16);
+    final cart = context.watch<CartBloc>();
 
     return Material(
       color: Colors.transparent,
@@ -57,15 +62,26 @@ class ProductCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Color(0xFFFFFFFF),
+                    color: Colors.white,
                   ),
                 ),
               ),
               TertiaryFilledButton(
                 width: double.infinity,
-                title: '16 000 монет',
+                title: '10 000 монет',
                 iconPath: AppIcons.plus,
-                onTap: () {},
+                onTap: () {
+                  cart.add(
+                    AddCartProductEvent(
+                      CartProductEntity(
+                        idMeal: product.id,
+                        strMeal: product.name,
+                        strMealThumb: product.thumbUrl,
+                        price: 10000,
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           ),

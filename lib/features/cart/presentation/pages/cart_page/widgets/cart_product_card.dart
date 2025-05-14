@@ -1,15 +1,27 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../core/constants/app_icons.dart';
 import '../../../../../../core/utils/extensions/context_extensions.dart';
+import '../../../../../../core/utils/formatters/currency_format.dart';
 import '../../../../../../core/widgets/buttons/primary_tonal_icon_button.dart';
+import '../../../../domain/entities/cart_product_entity.dart';
+import '../../../bloc/cart_bloc/cart_bloc.dart';
+import '../../../bloc/cart_bloc/cart_event.dart';
 
 class CartProductCard extends StatelessWidget {
-  const CartProductCard({super.key});
+  const CartProductCard({
+    required this.product,
+    super.key,
+  });
+
+  final CartProductEntity product;
 
   @override
   Widget build(BuildContext context) {
+    final cart = context.read<CartBloc>();
+
     const imageSize = 56.0;
 
     return Row(
@@ -23,24 +35,26 @@ class CartProductCard extends StatelessWidget {
             color: context.colorScheme.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: CachedNetworkImage(
-            imageUrl:
-                'https://static.vecteezy.com/system/resources/previews/054/656/158/non_2x/glass-of-fresh-lemon-juice-free-png.png',
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: CachedNetworkImage(
+              imageUrl: product.strMealThumb,
+            ),
           ),
         ),
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Pepsi 0,33 л',
-                style: TextStyle(
+                product.strMeal,
+                style: const TextStyle(
                   fontSize: 13,
                 ),
               ),
               Text(
-                '16 000 монет',
-                style: TextStyle(
+                currencyFormat.format(product.fullPrice),
+                style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),
@@ -53,15 +67,19 @@ class CartProductCard extends StatelessWidget {
           children: [
             PrimaryTonalIconButton(
               iconPath: AppIcons.minus,
-              onPressed: () {},
+              onPressed: () {
+                cart.add(
+                  RemoveCartProductEvent(product.idMeal),
+                );
+              },
             ),
             ConstrainedBox(
               constraints: const BoxConstraints(
                 minWidth: 30,
               ),
-              child: const Text(
-                '1',
-                style: TextStyle(
+              child: Text(
+                product.quantity.toString(),
+                style: const TextStyle(
                   fontSize: 15,
                 ),
                 textAlign: TextAlign.center,
@@ -69,7 +87,11 @@ class CartProductCard extends StatelessWidget {
             ),
             PrimaryTonalIconButton(
               iconPath: AppIcons.plus,
-              onPressed: () {},
+              onPressed: () {
+                cart.add(
+                  AddCartProductEvent(product),
+                );
+              },
             ),
           ],
         ),

@@ -12,6 +12,6 @@ final getIt = GetIt.instance;
 )
 class ServiceLocator {
   static Future<void> configureDependencies() async {
-    getIt.init();
+    await getIt.init();
   }
 }

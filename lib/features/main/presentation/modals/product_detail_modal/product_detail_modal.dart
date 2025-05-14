@@ -9,6 +9,9 @@ import '../../../../../core/constants/app_icons.dart';
 import '../../../../../core/di/injectable.dart';
 import '../../../../../core/utils/extensions/context_extensions.dart';
 import '../../../../../core/widgets/buttons/primary_filled_button.dart';
+import '../../../../cart/domain/entities/cart_product_entity.dart';
+import '../../../../cart/presentation/bloc/cart_bloc/cart_bloc.dart';
+import '../../../../cart/presentation/bloc/cart_bloc/cart_event.dart';
 import '../../../domain/entities/product_entity/product_entity.dart';
 import '../../bloc/product_detail_bloc/product_detail_bloc.dart';
 import '../../bloc/product_detail_bloc/product_detail_state.dart';
@@ -58,6 +61,7 @@ class _BuildDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cart = context.read<CartBloc>();
     final strInstructions = product.strInstructions;
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -75,9 +79,20 @@ class _BuildDetail extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: PrimaryFilledButton(
-            title: '24 000 монет',
+            title: '10 000 монет',
             iconPath: AppIcons.plus,
-            onPressed: () {},
+            onPressed: () {
+              cart.add(
+                AddCartProductEvent(
+                  CartProductEntity(
+                    idMeal: product.id,
+                    strMeal: product.name,
+                    strMealThumb: product.thumbUrl,
+                    price: 10000,
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),
